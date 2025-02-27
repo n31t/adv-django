@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}API Testing Interface{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .sidebar {
+            min-height: 100vh;
+            background-color: #f8f9fa;
+            padding-top: 20px;
+        }
+        .main-content {
+            padding: 20px;
+        }
+        .nav-link {
+            color: #333;
+            padding: 10px 15px;
+            margin: 5px 0;
+            border-radius: 5px;
+        }
+        .nav-link:hover {
+            background-color: #e9ecef;
+        }
+        .nav-link.active {
+            background-color: #0d6efd;
+            color: white;
+        }
+        .endpoint-card {
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .response-area {
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3 col-lg-2 sidebar">
+                <h4 class="text-center mb-4">API Testing</h4>
+                <nav class="nav flex-column">
+                    <a class="nav-link {% if active_section == 'auth' %}active{% endif %}" href="{% url 'auth_interface' %}">
+                        <i class="fas fa-key me-2"></i>Authentication
+                    </a>
+                    <a class="nav-link {% if active_section == 'users' %}active{% endif %}" href="{% url 'users_interface' %}">
+                        <i class="fas fa-users me-2"></i>Users
+                    </a>
+                    <a class="nav-link {% if active_section == 'products' %}active{% endif %}" href="{% url 'products_interface' %}">
+                        <i class="fas fa-box me-2"></i>Products
+                    </a>
+                    <a class="nav-link {% if active_section == 'orders' %}active{% endif %}" href="{% url 'orders_interface' %}">
+                        <i class="fas fa-shopping-cart me-2"></i>Orders
+                    </a>
+                    <a class="nav-link {% if active_section == 'sales' %}active{% endif %}" href="{% url 'sales_interface' %}">
+                        <i class="fas fa-chart-line me-2"></i>Sales
+                    </a>
+                    <a class="nav-link {% if active_section == 'analytics' %}active{% endif %}" href="{% url 'analytics_interface' %}">
+                        <i class="fas fa-chart-bar me-2"></i>Analytics
+                    </a>
+                    <a class="nav-link {% if active_section == 'notifications' %}active{% endif %}" href="{% url 'notifications_interface' %}">
+                        <i class="fas fa-bell me-2"></i>Notifications
+                    </a>
+                </nav>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-md-9 col-lg-10 main-content">
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+
+                {% block content %}{% endblock %}
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        // Common JavaScript functions for API calls
+        function sendApiRequest(url, method, data, token) {
+            return $.ajax({
+                url: url,
+                type: method,
+                data: JSON.stringify(data),
+                contentType: 'application/json',
+                headers: {
+                    'Authorization': token ? `Bearer ${token}` : null
+                },
+                beforeSend: function() {
+                    $('#loading-spinner').show();
+                },
+                complete: function() {
+                    $('#loading-spinner').hide();
+                }
+            });
+        }
+
+        function displayResponse(response, status, container) {
+            const responseHtml = `
+                <div class="response-area">
+                    <h5 class="text-${status === 'success' ? 'success' : 'danger'}">
+                        ${status === 'success' ? 'Success' : 'Error'}
+                    </h5>
+                    <pre class="mt-2"><code>${JSON.stringify(response, null, 2)}</code></pre>
+                </div>
+            `;
+            $(container).html(responseHtml);
+        }
+    </script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html> 
