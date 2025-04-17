@@ -20,16 +20,17 @@ with open(SKILLS_FILE, 'r') as f:
     SKILLS = {line.strip().lower() for line in f if line.strip()}
 
 class JobRecommendationsView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+    # permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
         # Ensure the user is a job seeker
-        if request.user.role != 'job_seeker':
-            return Response({"error": "Only job seekers can access job recommendations"},
-                           status=status.HTTP_403_FORBIDDEN)
+        # if request.user.role != 'job_seeker':
+        #     return Response({"error": "Only job seekers can access job recommendations"},
+        #                    status=status.HTTP_403_FORBIDDEN)
 
         # Get the latest processed resume for the user
-        resume = Resume.objects.filter(user=request.user, processed=True).last()
+        # resume = Resume.objects.filter(user=request.user, processed=True).last()
+        resume = Resume.objects.last()
         if not resume:
             return Response({"error": "No processed resume found. Please upload and process a resume first."},
                            status=status.HTTP_404_NOT_FOUND)
@@ -85,7 +86,7 @@ class JobRecommendationsView(APIView):
 
 @method_decorator(cache_page(60 * 15), name='dispatch')  # Cache for 15 min
 class JobListView(APIView):
-    permission_classes = [permissions.AllowAny]
+    # permission_classes = [permissions.AllowAny]
 
     def get(self, request):
         logger.info("View logic executed — this should appear only once if cache works.")
@@ -94,7 +95,7 @@ class JobListView(APIView):
         return Response({"jobs": serializer.data}, status=status.HTTP_200_OK)
 
 class JobCreateView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+    # permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request):
         serializer = JobListingSerializer(data=request.data, context={'request': request})
@@ -104,7 +105,7 @@ class JobCreateView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class JobUpdateView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+    # permission_classes = [permissions.IsAuthenticated]
 
     def put(self, request, job_id):
         if request.user.role != 'recruiter':
@@ -125,8 +126,8 @@ class JobDeleteView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def delete(self, request, job_id):
-        if request.user.role != 'recruiter':
-            return Response({"error": "Only recruiters can delete jobs"}, status=status.HTTP_403_FORBIDDEN)
+        # if request.user.role != 'recruiter':
+        #     return Response({"error": "Only recruiters can delete jobs"}, status=status.HTTP_403_FORBIDDEN)
 
         try:
             job = JobListing.objects.get(id=job_id, posted_by=request.user)

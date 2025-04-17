@@ -54,7 +54,7 @@ LOGGING = {
             'level': 'INFO',
             'propagate': True,
         },
-        'myapp': {  # Replace with your actual app name
+        'mysite': {  # Replace with your actual app name
             'handlers': ['console', 'file'],
             'level': 'DEBUG',
         },
@@ -133,9 +133,9 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'auth_db',
+        'NAME': 'resume_analyzer',
         'USER': 'postgres',
-        'PASSWORD': config('DB_PASSWORD'),
+        'PASSWORD': 'password',
         'HOST': 'localhost',
         'PORT': '5432',
     },
@@ -196,7 +196,7 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'zhaslanbeksultan@gmail.com'
+EMAIL_HOST_USER = 'zhex.arsen@gmail.com'
 EMAIL_HOST_PASSWORD = ''
 FRONTEND_URL = 'http://localhost:3000'
 
